@@ -64,7 +64,7 @@ HwcDebug::HwcDebug(uint32_t dpy):
     } else {
         strncpy(mDisplayName, "primary", strlen("primary"));
     }
-    sprintf(mDumpPropKeyDisplayType, "debug.sf.dump.%s", (char *)mDisplayName);
+    snprintf(mDumpPropKeyDisplayType, sizeof(mDumpPropKeyDisplayType), "debug.sf.dump.%s", (char *)mDisplayName);
 
     if ((property_get("debug.sf.dump.enable", dumpPropStr, NULL) > 0)) {
         if(!strncmp(dumpPropStr, "true", strlen("true"))) {
@@ -121,7 +121,8 @@ bool HwcDebug::needToDumpLayers()
         }
         mDumpCntLimPng = (mDumpCntLimPng < 0) ? 0: mDumpCntLimPng;
         if (mDumpCntLimPng) {
-            sprintf(mDumpDirPng,
+            snprintf(mDumpDirPng,
+                    sizeof(mDumpDirPng),
                     "/data/sfdump.png.%04d.%02d.%02d.%02d.%02d.%02d",
                     dumpTime.tm_year + 1900, dumpTime.tm_mon + 1,
                     dumpTime.tm_mday, dumpTime.tm_hour,
@@ -151,7 +152,8 @@ bool HwcDebug::needToDumpLayers()
         }
         mDumpCntLimRaw = (mDumpCntLimRaw < 0) ? 0: mDumpCntLimRaw;
         if (mDumpCntLimRaw) {
-            sprintf(mDumpDirRaw,
+            snprintf(mDumpDirRaw,
+                    sizeof(mDumpDirRaw),
                     "/data/sfdump.raw.%04d.%02d.%02d.%02d.%02d.%02d",
                     dumpTime.tm_year + 1900, dumpTime.tm_mon + 1,
                     dumpTime.tm_mday, dumpTime.tm_hour,
@@ -276,11 +278,11 @@ void HwcDebug::dumpLayer(size_t layerIndex, hwc_layer_1_t hwLayers[])
     bool needDumpRaw = (mDumpCntrRaw <= mDumpCntLimRaw)? true:false;
 
     if (needDumpPng) {
-        sprintf(dumpLogStrPng, "[png-dump-frame: %03d of %03d]", mDumpCntrPng,
+        snprintf(dumpLogStrPng, sizeof(dumpLogStrPng), "[png-dump-frame: %03d of %03d]", mDumpCntrPng,
             mDumpCntLimPng);
     }
     if (needDumpRaw) {
-        sprintf(dumpLogStrRaw, "[raw-dump-frame: %03d of %03d]", mDumpCntrRaw,
+        snprintf(dumpLogStrRaw, sizeof(dumpLogStrRaw), "[raw-dump-frame: %03d of %03d]", mDumpCntrRaw,
             mDumpCntLimRaw);
     }
 
@@ -310,7 +312,7 @@ void HwcDebug::dumpLayer(size_t layerIndex, hwc_layer_1_t hwLayers[])
         char dumpFilename[PATH_MAX];
         SkBitmap *tempSkBmp = new SkBitmap();
         SkColorType tempSkBmpColor = kUnknown_SkColorType;
-        sprintf(dumpFilename, "%s/sfdump%03d.layer%d.%s.png", mDumpDirPng,
+        snprintf(dumpFilename, sizeof(dumpFilename),"%s/sfdump%03d.layer%d.%s.png", mDumpDirPng,
             mDumpCntrPng, layerIndex, mDisplayName);
 
         switch (hnd->format) {
@@ -347,7 +349,7 @@ void HwcDebug::dumpLayer(size_t layerIndex, hwc_layer_1_t hwLayers[])
     if (needDumpRaw && hnd->base) {
         char dumpFilename[PATH_MAX];
         bool bResult = false;
-        sprintf(dumpFilename, "%s/sfdump%03d.layer%d.%dx%d.%s.%s.raw",
+        snprintf(dumpFilename, sizeof(dumpFilename),"%s/sfdump%03d.layer%d.%dx%d.%s.%s.raw",
             mDumpDirRaw, mDumpCntrRaw,
             layerIndex, hnd->width, hnd->height,
             pixFormatStr, mDisplayName);
@@ -423,7 +425,7 @@ void HwcDebug::getHalPixelFormatStr(int format, char pixFormatStr[])
             strcpy(pixFormatStr, "YCbCr_420_SP_VENUS");
             break;
         default:
-            sprintf(pixFormatStr, "Unknown0x%X", format);
+            snprintf(pixFormatStr, sizeof(*pixFormatStr), "Unknown0x%X", format);
             break;
     }
 }

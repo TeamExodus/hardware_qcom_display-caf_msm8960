@@ -70,7 +70,7 @@ void Overlay::configDone() {
             //fds
             if(mPipeBook[i].valid()) {
                 char str[32];
-                sprintf(str, "Unset pipe=%s dpy=%d; ",
+                snprintf(str, sizeof(str), "Unset pipe=%s dpy=%d; ",
                         PipeBook::getDestStr((eDest)i), mPipeBook[i].mDisplay);
                 strncat(mDumpStr, str, strlen(str));
             }
